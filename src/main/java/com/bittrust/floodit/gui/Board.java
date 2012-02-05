@@ -21,17 +21,30 @@ public class Board extends JPanel {
     private JLabel[][] board = new JLabel[HEIGHT][WIDTH];
     private Color currentColor;
 
-    public Board() {
+    public Board(boolean blankFill) {
         rnd = new MersenneTwister();
         this.setLayout(new GridLayout(10,10));
         this.setBounds(0, 0, 150, 150);
         this.setVisible(true);
-    }
+
+        if(blankFill) {
+            for(int h=0; h < HEIGHT; ++h) {
+                for(int w=0; w < WIDTH; ++w) {
+                    JLabel label = new JLabel();
+                    
+                    label.setOpaque(true);
+
+                    this.add(label);
+                    board[h][w] = label;
+                }
+            }
+        }
+}
     
     public void randomlyFillBoard() {
         for(int h=0; h < HEIGHT; ++h) {
             for(int w=0; w < WIDTH; ++w) {
-                JLabel label = generateLable(colorMap[rnd.nextInt(colorMap.length)]);
+                JLabel label = generateLabel(colorMap[rnd.nextInt(colorMap.length)]);
                 
                 this.add(label);
                 board[h][w] = label;
@@ -80,15 +93,17 @@ public class Board extends JPanel {
         return changeCount;
     }
     
-    private void setBoard(Color[][] colors) {
+    public void setBoard(Color[][] colors) {
         for(int h=0; h < HEIGHT; ++h) {
             for(int w=0; w < WIDTH; ++w) {
                 board[h][w].setBackground(colors[h][w]);
             }
         }
+        
+        this.updateUI();
     }
     
-    private Color[][] getColorBoard() {
+    public Color[][] getColorBoard() {
         Color[][] ret = new Color[HEIGHT][WIDTH];
         
         for(int h=0; h < HEIGHT; ++h) {
@@ -130,7 +145,7 @@ public class Board extends JPanel {
         return false;
     }
    
-    private JLabel generateLable(Color color) {
+    private JLabel generateLabel(Color color) {
         JLabel ret = new JLabel();
         
         ret.setOpaque(true);

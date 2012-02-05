@@ -10,13 +10,16 @@ public class ColorButton extends JButton implements ActionListener {
 
     private static final long serialVersionUID = -7981882862582714754L;
     
-    private Board board;
+    private Board curBoard;
+    private Board lastBoard;
     private Color color;
+    static private int stepNum = 0;
 
-    public ColorButton(Board board, Color color) {
+    public ColorButton(Board curBoard, Board lastBoard, Color color) {
         super(" ");
         
-        this.board = board;
+        this.curBoard = curBoard;
+        this.lastBoard = lastBoard;
         this.color = color;
         
         this.setBackground(color);
@@ -25,8 +28,16 @@ public class ColorButton extends JButton implements ActionListener {
     }
 
     public void actionPerformed(ActionEvent event) {
-        int numChanged = board.flood(color);
+        Color[][] curColorBoard = curBoard.getColorBoard();
         
-        System.out.println("NUM CHANGED: " + numChanged);
+        int numChanged = curBoard.flood(color);
+        
+        stepNum++;
+        
+        if(stepNum > 1) {
+            lastBoard.setBoard(curColorBoard);
+        }
+        
+        System.out.println(stepNum + " NUM CHANGED: " + numChanged);
     }
 }
