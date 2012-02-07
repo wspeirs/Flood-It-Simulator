@@ -28,6 +28,9 @@ public class ColorButton extends JButton implements ActionListener {
     }
 
     public void actionPerformed(ActionEvent event) {
+        if(curBoard.isGameOver())
+            return;
+        
         Color[][] curColorBoard = curBoard.getColorBoard();
         
         int numChanged = curBoard.flood(color);
@@ -38,7 +41,12 @@ public class ColorButton extends JButton implements ActionListener {
             lastBoard.setBoard(curColorBoard);
         }
         
+        System.out.println("STEP: " + stepNum);
         curBoard.printColorCount();
         System.out.println();
+        System.out.println("CHANGED: " + numChanged);
+        
+        if(curBoard.isGameOver())
+            System.out.println("* GAME OVER *");
     }
 }

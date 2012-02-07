@@ -38,6 +38,9 @@ public class Board extends JPanel {
         for(Color c:colorMap) {
             colorCount.put(c, 0);
         }
+        
+        // set our flood area counter
+        colorCount.put(Color.BLACK, 1);
 
         if(blankFill) {
             for(int h=0; h < HEIGHT; ++h) {
@@ -76,6 +79,10 @@ public class Board extends JPanel {
         return UnmodifiableMap.decorate(colorCount);
     }
     
+    public boolean isGameOver() {
+        return colorCount.get(currentColor) == HEIGHT * WIDTH;
+    }
+    
     public void printColorCount() {
         for(Color c:colorMap) {
             System.out.println(colorToString(c) + ": " + colorCount.get(c));
@@ -89,7 +96,7 @@ public class Board extends JPanel {
         else if(color.equals(Color.GREEN)) return "GREEN";
         else if(color.equals(Color.CYAN)) return "CYAN";
         else if(color.equals(Color.RED)) return "RED";
-        else return color.toString();
+        else return "";
     }
     
     /**
@@ -98,43 +105,49 @@ public class Board extends JPanel {
      * @return The number of new squares converted.
      */
     public int flood(Color color) {
-        if(color.equals(currentColor)) {
+        if(color.equals(currentColor) || isGameOver()) {
             return 0;
         }
         
         Color[][] newBoard = new Color[HEIGHT][WIDTH];
         
-        int total = flood( color, 0, 0, newBoard, currentColor );       
-        
+        flood(true, color, 0, 0, newBoard, currentColor);
+
         currentColor = color;
         setBoard(newBoard);
         
-        return total;
+        int beforeCount = colorCount.get(Color.BLACK);
+        
+        colorCount.put(Color.BLACK, 0);
+
+        flood(false, Color.BLACK, 0, 0, new Color[HEIGHT][WIDTH], currentColor );
+
+        int afterCount = colorCount.get(Color.BLACK);
+        
+        return afterCount - beforeCount;
     }
 
-    private int flood(Color color, int row, int column, Color[][] newBoard, Color parentColor ) {
+    private void flood(boolean updateCount, Color color, int row, int column, Color[][] newBoard, Color parentColor ) {
         if( row >= 0 && row < HEIGHT && column >= 0 && column < WIDTH && newBoard[row][column] == null ) {
             Color currentColor = board[row][column].getBackground();
-            int count =  0;
             
             if( currentColor.equals( parentColor ) ) {          
                 newBoard[row][column] = color;
                 
                 // update the color count
-                colorCount.put(currentColor, colorCount.get(currentColor) - 1);
+                if(updateCount)
+                    colorCount.put(currentColor, colorCount.get(currentColor) - 1);
+                
+                // always update this, as it is BLACK second time through
                 colorCount.put(color, colorCount.get(color) + 1);
-                count++;
             
-                count +=    flood( color, row + 1, column, newBoard, currentColor ) +           
-                            flood( color, row - 1, column, newBoard, currentColor ) +
-                            flood( color, row, column + 1, newBoard, currentColor ) +
-                            flood( color, row, column - 1, newBoard, currentColor );
+                // recurse in all 4 directions
+                flood(updateCount, color, row + 1, column, newBoard, currentColor);
+                flood(updateCount, color, row - 1, column, newBoard, currentColor);
+                flood(updateCount, color, row, column + 1, newBoard, currentColor);
+                flood(updateCount, color, row, column - 1, newBoard, currentColor);
             }
-                        
-            return count;
         }
-        else
-            return 0;   
     }
 
     public void setBoard(Color[][] colors) {
