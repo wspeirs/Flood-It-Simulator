@@ -38,6 +38,7 @@ public class ColorButton extends JButton implements ActionListener {
             lastBoard.setBoard(curColorBoard);
         }
         
-        System.out.println(stepNum + " NUM CHANGED: " + numChanged);
+        curBoard.printColorCount();
+        System.out.println();
     }
 }
