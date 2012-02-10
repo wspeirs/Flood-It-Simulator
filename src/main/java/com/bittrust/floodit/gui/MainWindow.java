@@ -38,6 +38,7 @@ public class MainWindow extends JFrame implements WindowListener {
         buttonPanel.add(new ColorButton(gameBoard, lastBoard, Color.GREEN), BorderLayout.SOUTH);
         buttonPanel.add(new ColorButton(gameBoard, lastBoard, Color.CYAN), BorderLayout.SOUTH);
         buttonPanel.add(new ColorButton(gameBoard, lastBoard, Color.RED), BorderLayout.SOUTH);
+        buttonPanel.add(new SimulationButton(gameBoard), BorderLayout.SOUTH);
         
         JPanel boardPanel = new JPanel();
         boardPanel.setLayout(new BoxLayout(boardPanel, BoxLayout.X_AXIS));

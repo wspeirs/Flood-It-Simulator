@@ -75,6 +75,10 @@ public class Board extends JPanel {
         return currentColor;
     }
     
+    public void setCurrentColor(Color currentColor) {
+        this.currentColor = currentColor;
+    }
+    
     public Map<Color, Integer> getColorCount() {
         return UnmodifiableMap.decorate(colorCount);
     }
@@ -90,11 +94,11 @@ public class Board extends JPanel {
     }
     
     public static String colorToString(Color color) {
-        if(color.equals(Color.MAGENTA)) return "MAGENTA";
+        if(color.equals(Color.MAGENTA)) return "PINK";
         else if(color.equals(Color.BLUE)) return "BLUE";
         else if(color.equals(Color.YELLOW)) return "YELLOW";
         else if(color.equals(Color.GREEN)) return "GREEN";
-        else if(color.equals(Color.CYAN)) return "CYAN";
+        else if(color.equals(Color.CYAN)) return "LT BLUE";
         else if(color.equals(Color.RED)) return "RED";
         else return "";
     }
@@ -131,7 +135,7 @@ public class Board extends JPanel {
         if( row >= 0 && row < HEIGHT && column >= 0 && column < WIDTH && newBoard[row][column] == null ) {
             Color currentColor = board[row][column].getBackground();
             
-            if( currentColor.equals( parentColor ) ) {          
+            if( currentColor.equals( parentColor ) ) {
                 newBoard[row][column] = color;
                 
                 // update the color count
@@ -148,6 +152,18 @@ public class Board extends JPanel {
                 flood(updateCount, color, row, column - 1, newBoard, currentColor);
             }
         }
+    }
+    
+    public void resetBoard(Color[][] colors, Map<Color, Integer> colorCount, Color currentColor) {
+        setBoard(colors);
+        
+        for(Map.Entry<Color, Integer> count:colorCount.entrySet()) {
+            this.colorCount.put(count.getKey(), count.getValue());
+        }
+        
+        this.colorCount.put(Color.BLACK, colorCount.get(Color.BLACK));
+        
+        this.currentColor = currentColor;
     }
 
     public void setBoard(Color[][] colors) {
